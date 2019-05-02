@@ -66,5 +66,5 @@ resource "aws_waf_web_acl" "in_office_waf_acl" {
 }
 
 output "in_office_waf_acl_id" {
-  value = "aws_waf_web_acl.in_office_waf_acl.id"
+  value = "${join("", aws_waf_web_acl.in_office_waf_acl.*.id)}"
 }

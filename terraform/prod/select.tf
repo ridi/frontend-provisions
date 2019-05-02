@@ -1,11 +1,9 @@
 locals {
-  select_hostname     = "select.ridibooks.com"
-  select_cdn_hostname = "select.ridicdn.net"
   select_s3_origin_id = "select-s3-origin"
 }
 
 resource "aws_s3_bucket" "select" {
-  bucket = "${local.select_hostname}"
+  bucket = "ridi-select-prod"
 
   website {
     index_document = "index.html"
@@ -14,7 +12,7 @@ resource "aws_s3_bucket" "select" {
   cors_rule {
     allowed_headers = ["*"]
     allowed_methods = ["GET"]
-    allowed_origins = ["${format("https://%s", local.select_hostname)}"]
+    allowed_origins = ["https://select.ridibooks.com"]
   }
 }
 
@@ -50,8 +48,6 @@ resource "aws_cloudfront_distribution" "select-ridicdn-net" {
   enabled         = true
   is_ipv6_enabled = true
 
-  aliases = ["${local.select_cdn_hostname}"]
-
   default_cache_behavior {
     allowed_methods = ["HEAD", "GET"]
     cached_methods  = ["HEAD", "GET"]
@@ -80,7 +76,5 @@ resource "aws_cloudfront_distribution" "select-ridicdn-net" {
 
   viewer_certificate {
     cloudfront_default_certificate = true
-    minimum_protocol_version       = "TLSv1.1_2016"
-    ssl_support_method             = "sni-only"
   }
 }
