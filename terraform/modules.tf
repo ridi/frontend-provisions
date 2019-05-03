@@ -3,6 +3,7 @@ module "dev" {
 
   providers = {
     aws = "aws.dev"
+    aws.virginia = "aws.virginia"
   }
 }
 

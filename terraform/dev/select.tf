@@ -1,4 +1,5 @@
 locals {
+  select_hostname     = "select.ridi.io"
   select_s3_origin_id = "select-s3-origin"
 }
 
@@ -48,6 +49,8 @@ resource "aws_cloudfront_distribution" "select-ridi-io" {
   enabled         = true
   is_ipv6_enabled = true
 
+  aliases = ["${local.select_hostname}"]
+
   custom_error_response {
     error_caching_min_ttl = 0
     error_code            = 404
@@ -70,7 +73,7 @@ resource "aws_cloudfront_distribution" "select-ridi-io" {
       }
     }
 
-    viewer_protocol_policy = "allow-all"
+    viewer_protocol_policy = "redirect-to-https"
   }
 
   default_root_object = "index.html"
@@ -84,8 +87,18 @@ resource "aws_cloudfront_distribution" "select-ridi-io" {
   }
 
   viewer_certificate {
-    cloudfront_default_certificate = true
+    acm_certificate_arn      = "${data.aws_acm_certificate.select.arn}"
+    minimum_protocol_version = "TLSv1.1_2016"
+    ssl_support_method       = "sni-only"
   }
 
   web_acl_id = "${module.common.in_office_waf_acl_id}"
+}
+
+data "aws_acm_certificate" "select" {
+  provider    = "aws.virginia"
+  domain      = "${local.select_hostname}"
+  statuses    = ["ISSUED"]
+  types       = ["AMAZON_ISSUED"]
+  most_recent = true
 }
