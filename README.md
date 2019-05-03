@@ -5,7 +5,7 @@
 $ vi .env
 ```
 
-## Initailize
+## Backend initailize
 ```bash
 $ docker-compose run terraform init -backend-config="token=<token>"
 ```
@@ -14,3 +14,5 @@ $ docker-compose run terraform init -backend-config="token=<token>"
 ```bash
 $ docker-compose run terraform <command>
 ```
+
+> To run locally without aws.prod access key, use `-target=module.dev` option
