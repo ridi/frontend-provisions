@@ -15,7 +15,7 @@ provider "aws" {
 }
 
 provider "aws" {
-  alias      = "virginia"
+  alias      = "dev.virginia"
   access_key = "${var.aws_dev_access_key}"
   secret_key = "${var.aws_dev_secret_key}"
   region     = "us-east-1"
@@ -26,4 +26,11 @@ provider "aws" {
   access_key = "${var.aws_prod_access_key}"
   secret_key = "${var.aws_prod_secret_key}"
   region     = "${var.region}"
+}
+
+provider "aws" {
+  alias      = "prod.virginia"
+  access_key = "${var.aws_prod_access_key}"
+  secret_key = "${var.aws_prod_secret_key}"
+  region     = "us-east-1"
 }
