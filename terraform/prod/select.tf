@@ -27,8 +27,8 @@ data "aws_iam_policy_document" "select" {
     resources = ["${aws_s3_bucket.select.arn}/*"]
 
     principals {
-      type        = "AWS"
-      identifiers = ["${aws_cloudfront_origin_access_identity.select.iam_arn}"]
+      type        = "*"
+      identifiers = ["*"]
     }
   }
 }
@@ -47,6 +47,8 @@ resource "aws_cloudfront_distribution" "select-ridicdn-net" {
 
   enabled         = true
   is_ipv6_enabled = true
+
+  aliases = ["select.ridicdn.net"]
 
   default_cache_behavior {
     allowed_methods = ["HEAD", "GET"]
