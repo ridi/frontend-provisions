@@ -87,7 +87,7 @@ resource "aws_cloudfront_distribution" "select-ridi-io" {
   }
 
   viewer_certificate {
-    acm_certificate_arn      = "${data.aws_acm_certificate.select.arn}"
+    acm_certificate_arn      = "${aws_acm_certificate.select.arn}"
     minimum_protocol_version = "TLSv1.1_2016"
     ssl_support_method       = "sni-only"
   }
@@ -95,10 +95,8 @@ resource "aws_cloudfront_distribution" "select-ridi-io" {
   web_acl_id = "${module.common.in_office_waf_acl_id}"
 }
 
-data "aws_acm_certificate" "select" {
-  provider    = "aws.virginia"
-  domain      = "${local.select_hostname}"
-  statuses    = ["ISSUED"]
-  types       = ["AMAZON_ISSUED"]
-  most_recent = true
+resource "aws_acm_certificate" "select" {
+  provider          = "aws.virginia"
+  domain_name       = "${local.select_hostname}"
+  validation_method = "DNS"
 }
