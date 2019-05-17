@@ -1,0 +1,24 @@
+language: minimal
+
+jobs:
+  include:
+    -
+      if: branch = develop AND type = pull_request
+      script:
+        - terraform init -backend-config="token=${}"
+        - terraform plan -target=module.dev
+    -
+      if: branch = develop
+      script:
+        - terraform init -backend-config="token=${}"
+        - terraform apply -target=module.dev -auto-approve
+    -
+      if: branch = master AND type = pull_request
+      script:
+        - terraform init -backend-config="token=${}"
+        - terraform plan
+    -
+      if: branch = master
+      script:
+        - terraform init -backend-config="token=${}"
+        - terraform apply -auto-approve
