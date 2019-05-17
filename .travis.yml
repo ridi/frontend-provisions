@@ -5,20 +5,20 @@ jobs:
     -
       if: branch = develop AND type = pull_request
       script:
-        - terraform init -backend-config="token=${}"
+        - terraform init -backend-config=\"token=${TERRAFORM_TOKEN}\"
         - terraform plan -target=module.dev
     -
-      if: branch = develop
+      if: branch = develop AND type = push
       script:
-        - terraform init -backend-config="token=${}"
+        - terraform init -backend-config=\"token=${TERRAFORM_TOKEN}\"
         - terraform apply -target=module.dev -auto-approve
     -
       if: branch = master AND type = pull_request
       script:
-        - terraform init -backend-config="token=${}"
+        - terraform init -backend-config=\"token=${TERRAFORM_TOKEN}\"
         - terraform plan
     -
-      if: branch = master
+      if: branch = master AND type = push
       script:
-        - terraform init -backend-config="token=${}"
+        - terraform init -backend-config=\"token=${TERRAFORM_TOKEN}\"
         - terraform apply -auto-approve
