@@ -1,11 +1,15 @@
 language: minimal
 
+services:
+  - docker
+
 addons:
   apt:
     packages:
       - docker-ce
 
 before_script:
+  - docker-compose -v
   - docker-compose run terraform init -backend-config=\"token=${TERRAFORM_TOKEN}\"
 
 jobs:
