@@ -5,20 +5,20 @@ jobs:
     -
       if: branch = develop AND type = pull_request
       script:
-        - terraform init -backend-config=\"token=${TERRAFORM_TOKEN}\"
-        - terraform plan -target=module.dev
+        - docker-compose run terraform init -backend-config=\"token=${TERRAFORM_TOKEN}\"
+        - docker-compose run terraform plan -target=module.dev
     -
       if: branch = develop AND type = push
       script:
-        - terraform init -backend-config=\"token=${TERRAFORM_TOKEN}\"
-        - terraform apply -target=module.dev -auto-approve
+        - docker-compose run terraform init -backend-config=\"token=${TERRAFORM_TOKEN}\"
+        - docker-compose run terraform apply -target=module.dev -auto-approve
     -
       if: branch = master AND type = pull_request
       script:
-        - terraform init -backend-config=\"token=${TERRAFORM_TOKEN}\"
-        - terraform plan
+        - docker-compose run terraform init -backend-config=\"token=${TERRAFORM_TOKEN}\"
+        - docker-compose run terraform plan
     -
       if: branch = master AND type = push
       script:
-        - terraform init -backend-config=\"token=${TERRAFORM_TOKEN}\"
-        - terraform apply -auto-approve
+        - docker-compose run terraform init -backend-config=\"token=${TERRAFORM_TOKEN}\"
+        - docker-compose run terraform apply -auto-approve
