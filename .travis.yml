@@ -1,14 +1,13 @@
 language: minimal
 
-services:
-  - docker
-
+dist: xenial
 addons:
   apt:
     packages:
-      - docker-ce
+      - docker
 
 before_script:
+  - docker -v
   - docker-compose -v
   - docker-compose run terraform init -backend-config=\"token=${TERRAFORM_TOKEN}\"
 
