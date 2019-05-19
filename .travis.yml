@@ -7,9 +7,7 @@ addons:
       - docker
 
 before_script:
-  - docker -v
-  - docker-compose -v
-  - docker-compose run terraform init -backend-config=\"token=${TERRAFORM_TOKEN}\"
+  - docker-compose run terraform init -backend-config="token=${TERRAFORM_TOKEN}"
 
 jobs:
   include:
