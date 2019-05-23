@@ -3,7 +3,7 @@ module "dev" {
 
   providers = {
     aws = "aws.dev"
-    aws.virginia = "aws.dev.virginia"
+    aws.virginia = "aws.dev_virginia"
   }
 }
 
@@ -12,6 +12,6 @@ module "prod" {
 
   providers = {
     aws = "aws.prod"
-    aws.virginia = "aws.prod.virginia"
+    aws.virginia = "aws.prod_virginia"
   }
 }
