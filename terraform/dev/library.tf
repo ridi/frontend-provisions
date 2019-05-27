@@ -29,7 +29,10 @@ data "aws_iam_policy_document" "library" {
 
     principals {
       type        = "AWS"
-      identifiers = ["${aws_cloudfront_origin_access_identity.library.iam_arn}"]
+      identifiers = [
+        "${aws_cloudfront_origin_access_identity.library.iam_arn}",
+        "arn:aws:iam::268847686663:user/s3-deploy"
+      ]
     }
   }
 }
