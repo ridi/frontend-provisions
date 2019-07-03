@@ -68,3 +68,60 @@ resource "aws_waf_web_acl" "in_office_waf_acl" {
 output "in_office_waf_acl_id" {
   value = "${join("", aws_waf_web_acl.in_office_waf_acl.*.id)}"
 }
+
+resource "aws_waf_ipset" "test_ridi_io_ipset" {
+  name = "test.ridi.io"
+
+  ip_set_descriptors = [
+    {
+      type  = "IPV4"
+      value = "52.78.20.56/32"
+    },
+  ]
+}
+
+resource "aws_waf_ipset" "books_ridi_io_allowed_ipset" {
+  name = "RIDI Office and test.ridi.io"
+
+  ip_set_descriptors = "${concat(aws_waf_ipset.office_ipset.ip_set_descriptors, aws_waf_ipset.test_ridi_io_ipset.ip_set_descriptors)}"
+}
+
+resource "aws_waf_rule" "books_ridi_io_wafrule" {
+  depends_on  = ["aws_waf_ipset.books_ridi_io_allowed_ipset"]
+  name        = "booksRidiIoWAFRule"
+  metric_name = "booksRidiIoWAFRule"
+
+  predicates {
+    data_id = "${aws_waf_ipset.books_ridi_io_allowed_ipset.id}"
+    negated = false
+    type    = "IPMatch"
+  }
+}
+
+resource "aws_waf_web_acl" "books_ridi_io_waf_acl" {
+  depends_on = [
+    "aws_waf_ipset.office_ipset",
+    "aws_waf_rule.allow_books_ridi_io_wafrule",
+  ]
+
+  name        = "booksRidiIoWebACL"
+  metric_name = "booksRidiIoWebACL"
+
+  default_action {
+    type = "BLOCK"
+  }
+
+  rules {
+    action {
+      type = "ALLOW"
+    }
+
+    priority = 1
+    rule_id  = "${aws_waf_rule.books_ridi_io_wafrule.id}"
+    type     = "REGULAR"
+  }
+}
+
+output "books_ridi_io_waf_acl_id" {
+  value = "${join("", aws_waf_web_acl.books_ridi_io_wafrule.*.id)}"
+}
