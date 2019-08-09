@@ -1,5 +1,5 @@
 locals {
-  select_s3_origin_id = "paper-s3-origin"
+  paper_s3_origin_id = "paper-s3-origin"
 }
 
 resource "aws_s3_bucket" "paper" {
