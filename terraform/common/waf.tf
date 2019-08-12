@@ -1,3 +1,23 @@
+resource "aws_waf_ipset" "gitlab_shared_runner" {
+  name = "RIDI Gitlab Shared Runner"
+
+  ip_set_descriptors = [
+    {
+      type = "IPV4"
+      value = "222.231.4.163/32"
+    },
+    {
+      type = "IPV4"
+      value = "52.78.157.166/32"
+    },
+    {
+      type = "IPV4"
+      value = "13.125.24.99/32"
+    }
+  ]
+}
+
+
 resource "aws_waf_ipset" "office_ipset" {
   name = "RIDI Office"
 
@@ -81,9 +101,9 @@ resource "aws_waf_ipset" "test_ridi_io_ipset" {
 }
 
 resource "aws_waf_ipset" "books_ridi_io_allowed_ipset" {
-  name = "RIDI Office and test.ridi.io"
+  name = "RIDI Office and test.ridi.io and Gitlab Shared Runners"
 
-  ip_set_descriptors = "${concat(aws_waf_ipset.office_ipset.ip_set_descriptors, aws_waf_ipset.test_ridi_io_ipset.ip_set_descriptors)}"
+  ip_set_descriptors = "${concat(aws_waf_ipset.office_ipset.ip_set_descriptors, aws_waf_ipset.test_ridi_io_ipset.ip_set_descriptors, aws_waf_ipset.gitlab_shared_runner)}"
 }
 
 resource "aws_waf_rule" "books_ridi_io_wafrule" {
