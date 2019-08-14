@@ -33,9 +33,22 @@ data "aws_iam_policy_document" "paper" {
   }
 }
 
+resource "aws_cloudfront_origin_access_identity" "paper" {}
+
+resource "aws_cloudfront_distribution" "paper-ridicdn-net" {
+  origin {
+    domain_name = "${aws_s3_bucket.paper.bucket_regional_domain_name}"
+    origin_id   = "${local.paper_s3_origin_id}"
+
+    s3_origin_config {
+      origin_access_identity = "${aws_cloudfront_origin_access_identity.paper.cloudfront_access_identity_path}"
+    }
+  }
 
   enabled         = true
   is_ipv6_enabled = true
+
+  aliases = ["paper.ridicdn.net"]
 
   default_cache_behavior {
     allowed_methods = ["HEAD", "GET"]
