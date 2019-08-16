@@ -1,0 +1,60 @@
+version: 2.1
+commands:
+  init:
+    steps:
+      - run: terraform init -backend-config="token=${TERRAFORM_TOKEN}"
+jobs:
+  terraform:
+    docker:
+      - image: hashicorp/terraform:0.11.14
+    working_directory: ~/frontend-provisions
+    parameters:
+      plan:
+        type: boolean
+        default: false
+      apply_dev:
+        type: boolean
+        default: false
+      apply_prod:
+        type: boolean
+        default: false
+    steps:
+      - checkout
+      - init
+      - when:
+          condition: <<parameters.plan>>
+          steps:
+            - run: terraform plan
+      - when:
+          condition: <<parameters.apply_dev>>
+          steps:
+            - run: terraform apply -target=module.dev -auto-approve
+      - when:
+          condition: <<parameters.apply_prod>>
+          steps:
+            - run: terraform apply -auto-approve
+workflows:
+  version: 2
+  plan:
+    jobs:
+      - terraform:
+          filters:
+            branches:
+              ignore:
+                - master
+                - release
+          plan: true
+  dev:
+    jobs:
+      - terraform:
+          filters:
+            branches:
+              only: master
+          apply_dev: true
+  prod:
+    jobs:
+      - terraform:
+          filters:
+            branches:
+              only: release
+          apply_prod: true
