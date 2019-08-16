@@ -24,6 +24,6 @@ jobs:
       script:
         - docker-compose run terraform apply -target=module.dev -auto-approve
     -
-      if: branch = master AND tag IS present
+      if: branch = release AND type = push
       script:
         - docker-compose run terraform apply -auto-approve
