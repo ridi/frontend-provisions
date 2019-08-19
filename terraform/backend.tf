@@ -2,7 +2,7 @@ terraform {
   backend "remote" {
     organization = "ridi"
 
-    workspaces = {
+    workspaces {
       name = "frontend"
     }
   }
