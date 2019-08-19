@@ -1,5 +1,6 @@
 locals {
-  paper_hostname     = "paper.ridi.io"
+  select_paper_hostname = "select.paper.ridi.io"
+  books_paper_hostname = "books.paper.ridi.io"
   paper_s3_origin_id = "paper-s3-origin"
 }
 
@@ -37,6 +38,7 @@ data "aws_iam_policy_document" "paper" {
 resource "aws_cloudfront_origin_access_identity" "paper" {}
 
 resource "aws_cloudfront_distribution" "paper-ridi-io" {
+  count = 2
   origin {
     domain_name = "${aws_s3_bucket.paper.bucket_regional_domain_name}"
     origin_id   = "${local.paper_s3_origin_id}"
@@ -49,13 +51,13 @@ resource "aws_cloudfront_distribution" "paper-ridi-io" {
   enabled         = true
   is_ipv6_enabled = true
 
-  aliases = ["${local.paper_hostname}"]
+  aliases = ["${count.index == 0 ? local.select_paper_hostname : local.books_paper_hostname}"]
 
   custom_error_response {
     error_caching_min_ttl = 0
     error_code            = 404
     response_code         = 200
-    response_page_path    = "/index.html"
+    response_page_path    = "${count.index == 0 ? "/select.html" : "/books.html"}"
   }
 
   default_cache_behavior {
@@ -76,7 +78,7 @@ resource "aws_cloudfront_distribution" "paper-ridi-io" {
     viewer_protocol_policy = "redirect-to-https"
   }
 
-  default_root_object = "index.html"
+  default_root_object = "${count.index == 0 ? "/select.html" : "/books.html"}"
 
   price_class = "PriceClass_200"
 
