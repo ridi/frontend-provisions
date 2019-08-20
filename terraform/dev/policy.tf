@@ -68,7 +68,7 @@ resource "aws_cloudfront_distribution" "policy-ridi-io" {
 
   viewer_certificate {
     acm_certificate_arn      = "${aws_acm_certificate.ridi-io.arn}"
-    minimum_protocol_version = "TLSv1"
+    minimum_protocol_version = "TLSv1.1_2016"
     ssl_support_method       = "sni-only"
   }
 

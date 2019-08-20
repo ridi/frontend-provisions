@@ -38,7 +38,7 @@ resource "aws_cloudfront_distribution" "policy-ridi-com" {
   enabled         = true
   is_ipv6_enabled = true
 
-  aliases = ["policy.ridicdn.net"]
+  aliases = ["policy.ridi.com"]
 
   default_cache_behavior {
     allowed_methods = ["HEAD", "GET"]
@@ -67,6 +67,8 @@ resource "aws_cloudfront_distribution" "policy-ridi-com" {
   }
 
   viewer_certificate {
-    cloudfront_default_certificate = true
+    acm_certificate_arn      = "${aws_acm_certificate.ridi-com.arn}"
+    minimum_protocol_version = "TLSv1.1_2016"
+    ssl_support_method       = "sni-only"
   }
 }
