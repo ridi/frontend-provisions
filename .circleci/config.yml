@@ -2,7 +2,7 @@ version: 2.1
 commands:
   init:
     steps:
-      - run: terraform init -backend-config="token=${TERRAFORM_TOKEN}"
+      - run: terraform init -backend-config="token=${TERRAFORM_TOKEN}" -upgrade
 jobs:
   terraform:
     docker:
