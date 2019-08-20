@@ -21,6 +21,16 @@ data "aws_iam_policy_document" "policy" {
       identifiers = [aws_cloudfront_origin_access_identity.policy.iam_arn]
     }
   }
+
+  statement {
+    actions   = ["s3:ListBucket"]
+    resources = ["${aws_s3_bucket.policy.arn}"]
+
+    principals {
+      type        = "AWS"
+      identifiers = [aws_cloudfront_origin_access_identity.policy.iam_arn]
+    }
+  }
 }
 
 resource "aws_cloudfront_origin_access_identity" "policy" {}
