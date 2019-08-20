@@ -3,7 +3,7 @@ locals {
 }
 
 resource "aws_s3_bucket" "policy" {
-  bucket = "policy.ridi.io"
+  bucket = "ridi-policy-dev"
 
   website {
     index_document = "index.html"
@@ -25,4 +25,56 @@ data "aws_iam_policy_document" "policy" {
       identifiers = ["*"]
     }
   }
+}
+
+resource "aws_cloudfront_origin_access_identity" "policy" {}
+
+resource "aws_cloudfront_distribution" "policy-ridi-io" {
+  origin {
+    domain_name = "${aws_s3_bucket.policy.bucket_regional_domain_name}"
+    origin_id   = "${local.policy_s3_origin_id}"
+
+    s3_origin_config {
+      origin_access_identity = "${aws_cloudfront_origin_access_identity.policy.cloudfront_access_identity_path}"
+    }
+  }
+
+  enabled         = true
+  is_ipv6_enabled = true
+
+  aliases = ["policy.ridi.io"]
+
+  default_cache_behavior {
+    allowed_methods = ["HEAD", "GET"]
+    cached_methods  = ["HEAD", "GET"]
+    compress        = false
+
+    target_origin_id = "${local.policy_s3_origin_id}"
+
+    forwarded_values {
+      query_string = false
+
+      cookies {
+        forward = "none"
+      }
+    }
+
+    viewer_protocol_policy = "allow-all"
+  }
+
+  price_class = "PriceClass_200"
+
+  restrictions {
+    geo_restriction {
+      restriction_type = "none"
+    }
+  }
+
+  viewer_certificate {
+    acm_certificate_arn      = "${aws_acm_certificate.ridi-io.arn}"
+    minimum_protocol_version = "TLSv1"
+    ssl_support_method       = "sni-only"
+  }
+
+  web_acl_id = "${module.common.in_office_waf_acl_id}"
 }
