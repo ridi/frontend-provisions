@@ -72,7 +72,7 @@ resource "aws_cloudfront_distribution" "policy-ridi-com" {
       }
     }
 
-    viewer_protocol_policy = "redirect-to-https"
+    viewer_protocol_policy = "allow-all"
   }
 
   default_root_object = "index.html"
