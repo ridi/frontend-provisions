@@ -48,6 +48,8 @@ resource "aws_cloudfront_distribution" "sorry-ridibooks-com" {
   enabled         = true
   is_ipv6_enabled = true
 
+  aliases = ["sorry.ridibooks.com"]
+
   custom_error_response {
     error_caching_min_ttl = 0
     error_code            = 404
@@ -84,6 +86,8 @@ resource "aws_cloudfront_distribution" "sorry-ridibooks-com" {
   }
 
   viewer_certificate {
-    cloudfront_default_certificate = true
+    acm_certificate_arn      = "${aws_acm_certificate.ridibooks-com.arn}"
+    minimum_protocol_version = "TLSv1.1_2016"
+    ssl_support_method       = "sni-only"
   }
 }
