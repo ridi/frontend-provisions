@@ -38,22 +38,22 @@ output "in_office_waf_acl_id" {
   value = "${join("", aws_waf_web_acl.in_office_waf_acl.*.id)}"
 }
 
-resource "aws_waf_rule" "books_ridi_io_wafrule" {
-  depends_on  = ["aws_waf_ipset.books_ridi_io_allowed_ipset"]
+resource "aws_waf_rule" "books_wafrule" {
+  depends_on  = ["aws_waf_ipset.books_allowed_ipset"]
   name        = "booksRidiIoWAFRule"
   metric_name = "booksRidiIoWAFRule"
 
   predicates {
-    data_id = "${aws_waf_ipset.books_ridi_io_allowed_ipset.id}"
+    data_id = "${aws_waf_ipset.books_allowed_ipset.id}"
     negated = false
     type    = "IPMatch"
   }
 }
 
-resource "aws_waf_web_acl" "books_ridi_io_waf_acl" {
+resource "aws_waf_web_acl" "books_waf_acl" {
   depends_on = [
-    "aws_waf_ipset.books_ridi_io_allowed_ipset",
-    "aws_waf_rule.books_ridi_io_wafrule",
+    "aws_waf_ipset.books_allowed_ipset",
+    "aws_waf_rule.books_wafrule",
   ]
 
   name        = "booksRidiIoWebACL"
@@ -69,11 +69,11 @@ resource "aws_waf_web_acl" "books_ridi_io_waf_acl" {
     }
 
     priority = 1
-    rule_id  = "${aws_waf_rule.books_ridi_io_wafrule.id}"
+    rule_id  = "${aws_waf_rule.books_wafrule.id}"
     type     = "REGULAR"
   }
 }
 
-output "books_ridi_io_waf_acl_id" {
-  value = "${join("", aws_waf_web_acl.books_ridi_io_waf_acl.*.id)}"
+output "books_waf_acl_id" {
+  value = "${join("", aws_waf_web_acl.books_waf_acl.*.id)}"
 }
