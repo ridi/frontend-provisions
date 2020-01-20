@@ -48,8 +48,6 @@ resource "aws_cloudfront_distribution" "library-ridicdn-net" {
   enabled         = true
   is_ipv6_enabled = true
 
-  aliases = ["library.ridicdn.net"]
-
   default_cache_behavior {
     allowed_methods = ["HEAD", "GET"]
     cached_methods  = ["HEAD", "GET"]
