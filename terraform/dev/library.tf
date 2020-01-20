@@ -49,8 +49,6 @@ resource "aws_cloudfront_distribution" "library-ridi-io" {
   enabled         = true
   is_ipv6_enabled = true
 
-  aliases = ["${local.library_hostname}"]
-
   custom_error_response {
     error_caching_min_ttl = 0
     error_code            = 404
