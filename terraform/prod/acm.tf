@@ -1,10 +1,10 @@
 resource "aws_acm_certificate" "ridibooks-com" {
-  provider                  = aws.virginia
-  domain_name               = "*.ridibooks.com"
+  provider    = aws.virginia
+  domain_name = "*.ridibooks.com"
   subject_alternative_names = [
     "ridibooks.com"
   ]
-  validation_method         = "DNS"
+  validation_method = "DNS"
 }
 
 resource "aws_acm_certificate" "ridicdn-net" {

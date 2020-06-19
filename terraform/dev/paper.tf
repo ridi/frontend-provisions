@@ -1,7 +1,7 @@
 locals {
   paper_hosts = {
     "select.paper.ridi.io" = { root_object = "/select.html" },
-    "books.paper.ridi.io" = { root_object = "/books.html" },
+    "books.paper.ridi.io"  = { root_object = "/books.html" },
   }
   paper_s3_origin_id = "paper-s3-origin"
 }

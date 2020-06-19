@@ -69,7 +69,7 @@ resource "aws_waf_ipset" "books_allowed_ipset" {
   name = "RIDI Office and test.ridi.io and Gitlab Shared Runners"
 
   dynamic "ip_set_descriptors" {
-    for_each = [for i in aws_waf_ipset.office_ipset.ip_set_descriptors: i.value]
+    for_each = [for i in aws_waf_ipset.office_ipset.ip_set_descriptors : i.value]
 
     content {
       type  = "IPV4"
@@ -78,7 +78,7 @@ resource "aws_waf_ipset" "books_allowed_ipset" {
   }
 
   dynamic "ip_set_descriptors" {
-    for_each = [for i in aws_waf_ipset.store_team_ipset.ip_set_descriptors: i.value]
+    for_each = [for i in aws_waf_ipset.store_team_ipset.ip_set_descriptors : i.value]
 
     content {
       type  = "IPV4"
@@ -87,7 +87,7 @@ resource "aws_waf_ipset" "books_allowed_ipset" {
   }
 
   dynamic "ip_set_descriptors" {
-    for_each = [for i in aws_waf_ipset.account_team_ipset.ip_set_descriptors: i.value]
+    for_each = [for i in aws_waf_ipset.account_team_ipset.ip_set_descriptors : i.value]
 
     content {
       type  = "IPV4"
