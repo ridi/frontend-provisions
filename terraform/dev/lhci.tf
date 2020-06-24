@@ -1,37 +1,41 @@
+locals {
+  eb_name = "lhci"
+}
+
 data "aws_elastic_beanstalk_solution_stack" "docker" {
   most_recent = true
   name_regex  = "^64bit Amazon Linux (.*) Node.js (.*)$"
 }
 
 resource "aws_s3_bucket" "lhci" {
-  bucket = "lhci"
+  bucket = local.eb_name
 }
 
 resource "aws_s3_bucket_object" "lhci" {
   bucket = aws_s3_bucket.lhci.id
   key    = "beanstalk/lhci-eb.zip"
-  source = "lhci-eb.zip"
+  source = concat(local.eb_name, "-eb.zip")
 }
 
 resource "aws_elastic_beanstalk_application" "lhci" {
-  name        = "lhci"
+  name        = local.eb_name
   description = "Google Lighthouse CI EB"
 }
 
 resource "aws_elastic_beanstalk_application_version" "lhci" {
-  application = "lhci"
+  application = local.eb_name
   bucket      = aws_s3_bucket.lhci.id
   key         = aws_s3_bucket_object.lhci.id
-  name        = "lhci"
+  name        = local.eb_name
   description = "Google Lighthouse CI EB Version"
 }
 
 resource "aws_elastic_beanstalk_environment" "lhci" {
   application         = aws_elastic_beanstalk_application.lhci.name
   description         = "Google Lighthouse CI EB Env"
-  cname_prefix        = "ridi-lhci"
+  cname_prefix        = concat("ridi", local.eb_name)
   tier                = "WebServer"
-  name                = "Lhci-env"
+  name                = concat(local.eb_name, "-env")
   solution_stack_name = data.aws_elastic_beanstalk_solution_stack.docker.name
   setting {
     name      = "aws:ec2:vpc"
