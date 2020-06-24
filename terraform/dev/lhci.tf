@@ -1,6 +1,6 @@
 data "aws_elastic_beanstalk_solution_stack" "docker" {
   most_recent = true
-  name_regex = "^64bit Amazon Linux (.*) Node.js (.*)$"
+  name_regex  = "^64bit Amazon Linux (.*) Node.js (.*)$"
 }
 
 resource "aws_s3_bucket" "lhci" {
