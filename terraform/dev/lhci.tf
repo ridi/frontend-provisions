@@ -14,7 +14,7 @@ resource "aws_s3_bucket" "lhci" {
 resource "aws_s3_bucket_object" "lhci" {
   bucket = aws_s3_bucket.lhci.id
   key    = "beanstalk/lhci-eb.zip"
-  source = concat(local.eb_name, "-eb.zip")
+  source = "lhci-eb.zip"
 }
 
 resource "aws_elastic_beanstalk_application" "lhci" {
@@ -33,9 +33,9 @@ resource "aws_elastic_beanstalk_application_version" "lhci" {
 resource "aws_elastic_beanstalk_environment" "lhci" {
   application         = aws_elastic_beanstalk_application.lhci.name
   description         = "Google Lighthouse CI EB Env"
-  cname_prefix        = concat("ridi", local.eb_name)
+  cname_prefix        = "ridi-lhci"
   tier                = "WebServer"
-  name                = concat(local.eb_name, "-env")
+  name                = "lhci-env"
   solution_stack_name = data.aws_elastic_beanstalk_solution_stack.docker.name
   setting {
     name      = "aws:ec2:vpc"
