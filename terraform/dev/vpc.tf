@@ -38,3 +38,11 @@ resource "aws_subnet" "main-new" {
   cidr_block              = each.value
   map_public_ip_on_launch = true
 }
+
+resource "aws_internet_gateway" "main" {
+  vpc_id = aws_vpc.main.id
+}
+
+resource "aws_internet_gateway" "main-new" {
+  vpc_id = aws_vpc.main-new.id
+}
