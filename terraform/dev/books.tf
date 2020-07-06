@@ -11,8 +11,8 @@ resource "aws_s3_bucket" "books" {
 resource "aws_lb" "books" {
   name    = "books"
   subnets = [
-    "${aws_subnet.ap-northeast-2a.id}",
-    "${aws_subnet.ap-northeast-2b.id}",
+    aws_subnet.main-new["ap-northeast-2a"].id,
+    aws_subnet.main-new["ap-northeast-2b"].id,
   ]
 }
 
