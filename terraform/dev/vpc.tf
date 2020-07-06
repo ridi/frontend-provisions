@@ -46,3 +46,31 @@ resource "aws_internet_gateway" "main" {
 resource "aws_internet_gateway" "main-new" {
   vpc_id = aws_vpc.main-new.id
 }
+
+resource "aws_route_table" "main-new" {
+  vpc_id = aws_vpc.main-new.id
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.main-new.id
+  }
+}
+
+resource "aws_security_group" "books-alb" {
+  name   = "books_alb"
+  vpc_id = aws_vpc.main-new.id
+
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
