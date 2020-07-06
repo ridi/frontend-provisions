@@ -14,6 +14,7 @@ resource "aws_lb" "books" {
     aws_subnet.main-new["ap-northeast-2a"].id,
     aws_subnet.main-new["ap-northeast-2b"].id,
   ]
+  security_groups = [aws_security_group.books-alb.id]
 }
 
 resource "aws_lb_listener" "books" {
