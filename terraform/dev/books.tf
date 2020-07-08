@@ -9,8 +9,8 @@ resource "aws_s3_bucket" "books" {
 }
 
 resource "aws_s3_bucket_policy" "books" {
-  bucket = "${aws_s3_bucket.books.id}"
-  policy = "${data.aws_iam_policy_document.books.json}"
+  bucket = aws_s3_bucket.books.id
+  policy = data.aws_iam_policy_document.books.json
 }
 
 data "aws_iam_policy_document" "books" {
@@ -20,7 +20,7 @@ data "aws_iam_policy_document" "books" {
 
     principals {
       type        = "AWS"
-      identifiers = ["${aws_cloudfront_origin_access_identity.books.iam_arn}"]
+      identifiers = [aws_cloudfront_origin_access_identity.books.iam_arn]
     }
   }
 
@@ -30,7 +30,7 @@ data "aws_iam_policy_document" "books" {
 
     principals {
       type        = "AWS"
-      identifiers = ["${aws_cloudfront_origin_access_identity.books.iam_arn}"]
+      identifiers = [aws_cloudfront_origin_access_identity.books.iam_arn]
     }
   }
 }
@@ -46,22 +46,22 @@ resource "aws_lb" "books" {
 }
 
 resource "aws_lb_listener" "books" {
-  load_balancer_arn = "${aws_lb.books.arn}"
+  load_balancer_arn = aws_lb.books.arn
   port              = "80"
   protocol          = "HTTP"
 
   default_action {
     type             = "forward"
-    target_group_arn = "${aws_lb_target_group.books-development.arn}"
+    target_group_arn = aws_lb_target_group.books-development.arn
   }
 }
 
 resource "aws_lb_listener_rule" "staging" {
-  listener_arn = "${aws_lb_listener.books.arn}"
+  listener_arn = aws_lb_listener.books.arn
 
   action {
     type             = "forward"
-    target_group_arn = "${aws_lb_target_group.books-staging.arn}"
+    target_group_arn = aws_lb_target_group.books-staging.arn
   }
 
   condition {
@@ -83,31 +83,31 @@ resource "aws_lb_target_group" "books-staging" {
 }
 
 resource "aws_lb_target_group_attachment" "books-development" {
-  target_group_arn = "${aws_lb_target_group.books-development.arn}"
-  target_id        = "${data.aws_lambda_function.books-development.arn}"
+  target_group_arn = aws_lb_target_group.books-development.arn
+  target_id        = data.aws_lambda_function.books-development.arn
   depends_on       = ["aws_lambda_permission.with_development"]
 }
 
 resource "aws_lb_target_group_attachment" "books-staging" {
-  target_group_arn = "${aws_lb_target_group.books-staging.arn}"
-  target_id        = "${data.aws_lambda_function.books-staging.arn}"
+  target_group_arn = aws_lb_target_group.books-staging.arn
+  target_id        = data.aws_lambda_function.books-staging.arn
   depends_on       = ["aws_lambda_permission.with_staging"]
 }
 
 resource "aws_lambda_permission" "with_development" {
   statement_id  = "AllowExecutionFromlb"
   action        = "lambda:InvokeFunction"
-  function_name = "${data.aws_lambda_function.books-development.arn}"
+  function_name = data.aws_lambda_function.books-development.arn
   principal     = "elasticloadbalancing.amazonaws.com"
-  source_arn    = "${aws_lb_target_group.books-development.arn}"
+  source_arn    = aws_lb_target_group.books-development.arn
 }
 
 resource "aws_lambda_permission" "with_staging" {
   statement_id  = "AllowExecutionFromlb"
   action        = "lambda:InvokeFunction"
-  function_name = "${data.aws_lambda_function.books-staging.arn}"
+  function_name = data.aws_lambda_function.books-staging.arn
   principal     = "elasticloadbalancing.amazonaws.com"
-  source_arn    = "${aws_lb_target_group.books-staging.arn}"
+  source_arn    = aws_lb_target_group.books-staging.arn
 }
 
 data "aws_lambda_function" "books-development" {
@@ -123,30 +123,30 @@ resource "aws_cloudfront_origin_access_identity" "books" {}
 
 resource "aws_cloudfront_distribution" "books-ridi-io" {
   origin {
-    domain_name = "${aws_lb.books.arn}"
-    origin_id   = "${local.books_lb_origin_id}"
+    domain_name = aws_lb.books.arn
+    origin_id   = local.books_lb_origin_id
   }
 
   origin {
-    domain_name = "${aws_s3_bucket.books.bucket_regional_domain_name}"
-    origin_id   = "${local.books_s3_origin_id}"
+    domain_name = aws_s3_bucket.books.bucket_regional_domain_name
+    origin_id   = local.books_s3_origin_id
 
     s3_origin_config {
-      origin_access_identity = "${aws_cloudfront_origin_access_identity.books.cloudfront_access_identity_path}"
+      origin_access_identity = aws_cloudfront_origin_access_identity.books.cloudfront_access_identity_path
     }
   }
 
   enabled         = true
   is_ipv6_enabled = true
 
-  aliases = ["${local.books_hostname}"]
+  aliases = [local.books_hostname]
 
   default_cache_behavior {
     allowed_methods = ["HEAD", "GET"]
     cached_methods  = ["HEAD", "GET"]
     compress        = false
 
-    target_origin_id = "${local.books_lb_origin_id}"
+    target_origin_id = local.books_lb_origin_id
 
     forwarded_values {
       query_string = false
@@ -164,7 +164,7 @@ resource "aws_cloudfront_distribution" "books-ridi-io" {
     path_pattern     = "/_next/*"
     allowed_methods  = ["GET"]
     cached_methods   = ["GET"]
-    target_origin_id = "${local.books_s3_origin_id}"
+    target_origin_id = local.books_s3_origin_id
     compress         = true
 
     forwarded_values {
@@ -187,7 +187,7 @@ resource "aws_cloudfront_distribution" "books-ridi-io" {
   }
 
   viewer_certificate {
-    acm_certificate_arn      = "${aws_acm_certificate.ridi-io.arn}"
+    acm_certificate_arn      = aws_acm_certificate.ridi-io.arn
     minimum_protocol_version = "TLSv1.1_2016"
     ssl_support_method       = "sni-only"
   }
