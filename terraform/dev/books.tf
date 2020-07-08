@@ -144,12 +144,32 @@ resource "aws_cloudfront_distribution" "books-ridi-io" {
   default_cache_behavior {
     allowed_methods = ["HEAD", "GET"]
     cached_methods  = ["HEAD", "GET"]
-    compress        = false
 
     target_origin_id = local.books_lb_origin_id
 
     forwarded_values {
-      query_string = false
+      query_string            = true
+      query_string_cache_keys = ["is_login"]
+
+      cookies {
+        forward           = "whitelist"
+        whitelisted_names = ["stage"]
+      }
+    }
+
+    viewer_protocol_policy = "allow-all"
+  }
+
+  ordered_cache_behavior {
+    path_pattern     = "/partials/gnb"
+
+    allowed_methods  = ["HEAD", "GET"]
+    cached_methods   = ["HEAD", "GET"]
+
+    target_origin_id = local.books_lb_origin_id
+
+    forwarded_values {
+      query_string = true
 
       cookies {
         forward           = "whitelist"
