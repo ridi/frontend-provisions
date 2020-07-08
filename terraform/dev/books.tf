@@ -26,7 +26,7 @@ data "aws_iam_policy_document" "books" {
 
   statement {
     actions   = ["s3:ListBucket"]
-    resources = ["${aws_s3_bucket.books.arn}/_next/"]
+    resources = [aws_s3_bucket.books.arn]
 
     principals {
       type        = "AWS"
@@ -37,7 +37,7 @@ data "aws_iam_policy_document" "books" {
 
 # Load Balancer
 resource "aws_lb" "books" {
-  name    = "books"
+  name = "books"
   subnets = [
     aws_subnet.main-new["ap-northeast-2a"].id,
     aws_subnet.main-new["ap-northeast-2b"].id,
@@ -123,8 +123,15 @@ resource "aws_cloudfront_origin_access_identity" "books" {}
 
 resource "aws_cloudfront_distribution" "books-ridi-io" {
   origin {
-    domain_name = aws_lb.books.arn
+    domain_name = aws_lb.books.dns_name
     origin_id   = local.books_lb_origin_id
+
+    custom_origin_config {
+      http_port              = 80
+      https_port             = 443
+      origin_protocol_policy = "http-only"
+      origin_ssl_protocols   = ["TLSv1.2"]
+    }
   }
 
   origin {
@@ -161,10 +168,10 @@ resource "aws_cloudfront_distribution" "books-ridi-io" {
   }
 
   ordered_cache_behavior {
-    path_pattern     = "/partials/gnb"
+    path_pattern = "/partials/gnb"
 
-    allowed_methods  = ["HEAD", "GET"]
-    cached_methods   = ["HEAD", "GET"]
+    allowed_methods = ["HEAD", "GET"]
+    cached_methods  = ["HEAD", "GET"]
 
     target_origin_id = local.books_lb_origin_id
 
@@ -182,8 +189,8 @@ resource "aws_cloudfront_distribution" "books-ridi-io" {
 
   ordered_cache_behavior {
     path_pattern     = "/_next/*"
-    allowed_methods  = ["GET"]
-    cached_methods   = ["GET"]
+    allowed_methods  = ["HEAD", "GET"]
+    cached_methods   = ["HEAD", "GET"]
     target_origin_id = local.books_s3_origin_id
     compress         = true
 
@@ -211,4 +218,6 @@ resource "aws_cloudfront_distribution" "books-ridi-io" {
     minimum_protocol_version = "TLSv1.2_2018"
     ssl_support_method       = "sni-only"
   }
+
+  depends_on = [aws_s3_bucket_policy.books]
 }
