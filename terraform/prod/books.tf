@@ -157,6 +157,27 @@ resource "aws_cloudfront_distribution" "books-ridibooks-com" {
   }
 
   ordered_cache_behavior {
+    path_pattern = "/search"
+
+    allowed_methods = ["HEAD", "GET"]
+    cached_methods  = ["HEAD", "GET"]
+
+    target_origin_id = local.books_lb_origin_id
+
+    forwarded_values {
+      query_string            = true
+      query_string_cache_keys = ["is_login", "q", "search", "adult_exclude"]
+
+      cookies {
+        forward           = "whitelist"
+        whitelisted_names = ["stage"]
+      }
+    }
+
+    viewer_protocol_policy = "allow-all"
+  }
+
+  ordered_cache_behavior {
     path_pattern = "/partials/gnb"
 
     allowed_methods = ["HEAD", "GET"]
@@ -177,7 +198,8 @@ resource "aws_cloudfront_distribution" "books-ridibooks-com" {
   }
 
   ordered_cache_behavior {
-    path_pattern     = "/_next/*"
+    path_pattern = "/_next/*"
+
     allowed_methods  = ["HEAD", "GET"]
     cached_methods   = ["HEAD", "GET"]
     target_origin_id = local.books_s3_origin_id
