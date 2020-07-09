@@ -207,4 +207,6 @@ resource "aws_cloudfront_distribution" "books-ridibooks-com" {
     minimum_protocol_version = "TLSv1.2_2018"
     ssl_support_method       = "sni-only"
   }
+
+  depends_on = [aws_s3_bucket_policy.books]
 }
