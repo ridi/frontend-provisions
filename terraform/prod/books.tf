@@ -142,7 +142,7 @@ resource "aws_cloudfront_distribution" "books-ridibooks-com" {
   enabled         = true
   is_ipv6_enabled = true
 
-  aliases = [local.books_hostname]
+  aliases = [local.books_hostname, "ridibooks.com"]
 
   default_cache_behavior {
     allowed_methods = ["HEAD", "GET"]
