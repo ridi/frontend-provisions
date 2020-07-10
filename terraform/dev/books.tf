@@ -160,7 +160,7 @@ resource "aws_cloudfront_distribution" "books-ridi-io" {
 
       cookies {
         forward           = "whitelist"
-        whitelisted_names = ["stage"]
+        whitelisted_names = ["ridi_app_theme", "stage"]
       }
     }
 
