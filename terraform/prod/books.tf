@@ -254,7 +254,7 @@ resource "aws_cloudfront_distribution" "books-ridicdn-net" {
     allowed_methods = ["HEAD", "GET"]
     cached_methods  = ["HEAD", "GET"]
 
-    target_origin_id = local.books_lb_origin_id
+    target_origin_id = local.books_s3_origin_id
 
     forwarded_values {
       query_string = false
