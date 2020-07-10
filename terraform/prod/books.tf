@@ -139,41 +139,36 @@ resource "aws_cloudfront_distribution" "books-ridibooks-com" {
     }
   }
 
+  origin {
+    domain_name = "s17jeqop1d.execute-api.ap-northeast-2.amazonaws.com"
+    origin_id   = "Custom-s17jeqop1d.execute-api.ap-northeast-2.amazonaws.com/production"
+    origin_path = "/production"
+
+    custom_origin_config {
+      http_port              = 80
+      https_port             = 443
+      origin_protocol_policy = "https-only"
+      origin_ssl_protocols   = [
+        "TLSv1",
+        "TLSv1.1",
+        "TLSv1.2"
+      ]
+    }
+  }
+
   enabled         = true
   is_ipv6_enabled = true
 
-  aliases = [local.books_hostname]
+  aliases = [local.books_hostname, "ridibooks.com"]
 
   default_cache_behavior {
     allowed_methods = ["HEAD", "GET"]
     cached_methods  = ["HEAD", "GET"]
 
-    target_origin_id = local.books_lb_origin_id
+    target_origin_id = "Custom-s17jeqop1d.execute-api.ap-northeast-2.amazonaws.com/production"
 
     forwarded_values {
-      query_string            = true
-      query_string_cache_keys = ["is_login"]
-
-      cookies {
-        forward           = "whitelist"
-        whitelisted_names = ["stage"]
-      }
-    }
-
-    viewer_protocol_policy = "allow-all"
-  }
-
-  ordered_cache_behavior {
-    path_pattern = "/search"
-
-    allowed_methods = ["HEAD", "GET"]
-    cached_methods  = ["HEAD", "GET"]
-
-    target_origin_id = local.books_lb_origin_id
-
-    forwarded_values {
-      query_string            = true
-      query_string_cache_keys = ["is_login", "q", "search", "adult_exclude"]
+      query_string = true
 
       cookies {
         forward           = "whitelist"
