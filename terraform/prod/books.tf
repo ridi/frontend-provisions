@@ -173,7 +173,7 @@ resource "aws_cloudfront_distribution" "books-ridibooks-com" {
 
     forwarded_values {
       query_string            = true
-      query_string_cache_keys = ["is_login", "q", "search", "adult_exclude"]
+      query_string_cache_keys = ["adult_exclude", "is_login", "q", "search"]
 
       cookies {
         forward           = "whitelist"
