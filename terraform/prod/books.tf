@@ -172,8 +172,7 @@ resource "aws_cloudfront_distribution" "books-ridibooks-com" {
     target_origin_id = local.books_lb_origin_id
 
     forwarded_values {
-      query_string            = true
-      query_string_cache_keys = ["adult_exclude", "is_login", "q", "search"]
+      query_string = true
 
       cookies {
         forward           = "whitelist"
