@@ -1,7 +1,7 @@
 locals {
-  books_hostname     = "books-staging.ridibooks.com"
-  books_lb_origin_id = "books-staging-lb-origin"
-  books_s3_origin_id = "books-staging-s3-origin"
+  books_staging_hostname     = "books-staging.ridibooks.com"
+  books_staging_lb_origin_id = "books-staging-lb-origin"
+  books_staging_s3_origin_id = "books-staging-s3-origin"
 }
 
 resource "aws_s3_bucket" "books-staging" {
@@ -45,7 +45,7 @@ resource "aws_cloudfront_origin_access_identity" "books-staging" {}
 resource "aws_cloudfront_distribution" "books-ridibooks-com" {
   origin {
     domain_name = aws_s3_bucket.books-staging.bucket_regional_domain_name
-    origin_id   = local.books_s3_origin_id
+    origin_id   = local.books_staging_s3_origin_id
 
     s3_origin_config {
       origin_access_identity = aws_cloudfront_origin_access_identity.books.cloudfront_access_identity_path
@@ -55,13 +55,13 @@ resource "aws_cloudfront_distribution" "books-ridibooks-com" {
   enabled         = true
   is_ipv6_enabled = true
 
-  aliases = [local.books_hostname]
+  aliases = [local.books_staging_hostname]
 
   default_cache_behavior {
     allowed_methods = ["HEAD", "GET"]
     cached_methods  = ["HEAD", "GET"]
 
-    target_origin_id = local.books_lb_origin_id
+    target_origin_id = local.books_staging_lb_origin_id
 
     forwarded_values {
       query_string            = true
@@ -82,7 +82,7 @@ resource "aws_cloudfront_distribution" "books-ridibooks-com" {
     allowed_methods = ["HEAD", "GET"]
     cached_methods  = ["HEAD", "GET"]
 
-    target_origin_id = local.books_lb_origin_id
+    target_origin_id = local.books_staging_lb_origin_id
 
     forwarded_values {
       query_string = true
@@ -102,7 +102,7 @@ resource "aws_cloudfront_distribution" "books-ridibooks-com" {
     allowed_methods = ["HEAD", "GET"]
     cached_methods  = ["HEAD", "GET"]
 
-    target_origin_id = local.books_lb_origin_id
+    target_origin_id = local.books_staging_lb_origin_id
 
     forwarded_values {
       query_string = true
@@ -121,7 +121,7 @@ resource "aws_cloudfront_distribution" "books-ridibooks-com" {
 
     allowed_methods  = ["HEAD", "GET"]
     cached_methods   = ["HEAD", "GET"]
-    target_origin_id = local.books_s3_origin_id
+    target_origin_id = local.books_staging_s3_origin_id
     compress         = true
 
     forwarded_values {
