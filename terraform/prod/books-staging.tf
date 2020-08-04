@@ -42,7 +42,7 @@ data "aws_iam_policy_document" "books-staging" {
 # CloudFront Distribution
 resource "aws_cloudfront_origin_access_identity" "books-staging" {}
 
-resource "aws_cloudfront_distribution" "books-ridibooks-com" {
+resource "aws_cloudfront_distribution" "books-staging-ridibooks-com" {
   origin {
     domain_name = aws_s3_bucket.books-staging.bucket_regional_domain_name
     origin_id   = local.books_staging_s3_origin_id
